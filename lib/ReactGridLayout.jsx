@@ -63,6 +63,7 @@ export type Props = {
 
   // Callbacks
   onLayoutChange: Layout => void,
+  onInitialLayout: Layout => void,
   onDrag: EventCallback,
   onDragStart: EventCallback,
   onDragStop: EventCallback,
@@ -162,6 +163,8 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     // Callback so you can save the layout. Calls after each drag & resize stops.
     onLayoutChange: PropTypes.func,
 
+    onInitialLayout: PropTypes.func,
+
     // Calls when drag starts. Callback is of the signature (layout, oldItem, newItem, placeholder, e, ?node).
     // All callbacks below have the same signature. 'start' and 'stop' callbacks omit the 'placeholder'.
     onDragStart: PropTypes.func,
@@ -218,6 +221,7 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     compactType: "vertical",
     preventCollision: false,
     onLayoutChange: noop,
+    onInitialLayout: noop,
     onDragStart: noop,
     onDrag: noop,
     onDragStop: noop,
@@ -258,6 +262,8 @@ export default class ReactGridLayout extends React.Component<Props, State> {
     // Possibly call back with layout on mount. This should be done after correcting the layout width
     // to ensure we don't rerender with the wrong width.
     this.onLayoutMaybeChanged(this.state.layout, this.props.layout);
+
+    this.props.onInitialLayout(this.state.layout);
   }
 
   componentWillReceiveProps(nextProps: Props) {

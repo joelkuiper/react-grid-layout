@@ -39,6 +39,7 @@ type Props<Breakpoint: string = string> = {
   // Callbacks
   onBreakpointChange: (Breakpoint, cols: number) => void,
   onLayoutChange: (Layout, { [key: Breakpoint]: Layout }) => void,
+  onInitialLayout: (Layout, { [key: Breakpoint]: Layout }) => void,
   onWidthChange: (
     containerWidth: number,
     margin: [number, number],
@@ -102,6 +103,8 @@ export default class ResponsiveReactGridLayout extends React.Component<
     // Calls back with (currentLayout, allLayouts). allLayouts are keyed by breakpoint.
     onLayoutChange: PropTypes.func,
 
+    onInitialLayout: PropTypes.func,
+
     // Calls back with (containerWidth, margin, cols, containerPadding)
     onWidthChange: PropTypes.func
   };
@@ -112,6 +115,7 @@ export default class ResponsiveReactGridLayout extends React.Component<
     layouts: {},
     onBreakpointChange: noop,
     onLayoutChange: noop,
+    onInitialLayout: noop,
     onWidthChange: noop
   };
 
@@ -172,6 +176,13 @@ export default class ResponsiveReactGridLayout extends React.Component<
   // wrap layouts so we do not need to pass layouts to child
   onLayoutChange = (layout: Layout) => {
     this.props.onLayoutChange(layout, {
+      ...this.props.layouts,
+      [this.state.breakpoint]: layout
+    });
+  };
+
+  onInitialLayout = (layout: Layout) => {
+    this.props.onInitialLayout(layout, {
       ...this.props.layouts,
       [this.state.breakpoint]: layout
     });
@@ -249,6 +260,7 @@ export default class ResponsiveReactGridLayout extends React.Component<
       layouts,
       onBreakpointChange,
       onLayoutChange,
+      onInitialLayout,
       onWidthChange,
       ...other
     } = this.props;
@@ -258,6 +270,7 @@ export default class ResponsiveReactGridLayout extends React.Component<
       <ReactGridLayout
         {...other}
         onLayoutChange={this.onLayoutChange}
+        onInitialLayout={this.onInitialLayout}
         layout={this.state.layout}
         cols={this.state.cols}
       />
